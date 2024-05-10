@@ -28,20 +28,7 @@ public:
         return *this;
     }
 
-    // Функція виводу у потік
-    friend ostream& operator<<(ostream& out, const Person& person) {
-        out << "Name: " << person.name << ", Age: " << person.age;
-        return out;
-    }
-
-    // Функція введення з потоку
-    friend istream& operator>>(istream& in, Person& person) {
-        cout << "Enter name: ";
-        in >> person.name;
-        cout << "Enter age: ";
-        in >> person.age;
-        return in;
-    }
+   
 };
 
 // Похідний клас "Службовець"
@@ -58,20 +45,25 @@ public:
         : Person(personName, personAge), position(empPosition) {}
 
     // Функція виводу у потік
-    friend ostream& operator<<(ostream& out, const Employee& employee) {
-        out << static_cast<const Person&>(employee) << ", Position: " << employee.position;
+    friend ostream& operator<<(ostream& out, const Employee& employee) ;
+    // Функція введення з потоку
+    friend istream& operator>>(istream& in, Employee& employee) ;
+};
+
+ // Функція виводу у потік
+    ostream& operator<<(ostream& out, const Person& person) {
+        out << "Name: " << person.name << ", Age: " << person.age;
         return out;
     }
 
     // Функція введення з потоку
-    friend istream& operator>>(istream& in, Employee& employee) {
-        in >> static_cast<Person&>(employee); // Викликаємо оператор >> базового класу
-        cout << "Enter position: ";
-        in >> employee.position;
+     istream& operator>>(istream& in, Person& person) {
+        cout << "Enter name: ";
+        in >> person.name;
+        cout << "Enter age: ";
+        in >> person.age;
         return in;
     }
-};
-
 int main() {
     // Тестування класу "Людина"
     cout << "Enter information for a person:" << endl;
