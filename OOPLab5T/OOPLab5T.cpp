@@ -1,95 +1,81 @@
 ﻿#include <iostream>
-#include <string>
+#include <cstring>
 
 using namespace std;
 
-// Клас "Точка"
-class Point {
-protected:
-    int x, y;
+// Клас "Процесор"
+class Processor {
+private:
+    int speed; // Потужність в Мгц
 
 public:
-    // Конструктор за замовчуванням
-    Point() : x(0), y(0) {}
+    // Конструктор з параметром
+    Processor(int MHz) : speed(MHz) {}
 
-    // Конструктор з параметрами
-    Point(int xCoord, int yCoord) : x(xCoord), y(yCoord) {}
-
-    // Деструктор
-    ~Point() {}
-
-    // Функція друку
-    void print() {
-        cout << "Point: (" << x << ", " << y << ")" << endl;
-    }
-
-    // Функція перепризначення координат точки
-    void setCoordinates(int newX, int newY) {
-        x = newX;
-        y = newY;
+    // Метод доступу для потужності
+    int getSpeed() const {
+        return speed;
     }
 };
 
-// Клас "Кольорова точка"
-class ColoredPoint : public Point {
-private:
-    string color;
+// Клас "Комп'ютер"
+class Computer {
+protected: // Змінив доступ на protected
+    Processor cpu; // Об'єкт процесора
+    char* brand;   // Марка комп'ютера
+    double price;  // Ціна комп'ютера
 
 public:
-    // Конструктор за замовчуванням
-    ColoredPoint() : Point(), color("black") {}
-
     // Конструктор з параметрами
-    ColoredPoint(int xCoord, int yCoord, string clr) : Point(xCoord, yCoord), color(clr) {}
+    Computer(int MHz, const char* brandName, double computerPrice)
+        : cpu(MHz), price(computerPrice) {
+        // Виділення пам'яті для марки та копіювання рядка
+        brand = new char[strlen(brandName) + 1];
+        strcpy_s(brand, strlen(brandName) + 1, brandName);
+
+    }
 
     // Деструктор
-    ~ColoredPoint() {}
+    ~Computer() {
+        delete[] brand; // Звільнення виділеної пам'яті
+    }
 
     // Функція друку
-    void print() {
-        cout << "Colored Point: (" << x << ", " << y << "), Color: " << color << endl;
+    void print() const {
+        cout << "Brand: " << brand << ", CPU Speed: " << cpu.getSpeed() << "MHz, Price: $" << price << endl;
     }
+};
 
-    // Функція перепризначення кольору
-    void setColor(string newColor) {
-        color = newColor;
-    }
+// Похідний клас "Комп'ютер з монітором"
+class ComputerWithMonitor : public Computer {
+private:
+    double monitorSize; // Розмір монітора в дюймах
 
-    // Функція виведення координат точки
-    void printCoordinates() {
-        cout << "Coordinates: (" << x << ", " << y << ")" << endl;
+public:
+    // Конструктор з параметрами
+    ComputerWithMonitor(int MHz, const char* brandName, double computerPrice, double monitorSize)
+        : Computer(MHz, brandName, computerPrice), monitorSize(monitorSize) {}
+
+    // Деструктор
+    ~ComputerWithMonitor() {}
+
+    // Функція друку
+    void print() const {
+        cout << "Brand: " << brand << ", CPU Speed: " << cpu.getSpeed() << "MHz, Price: $" << price
+            << ", Monitor Size: " << monitorSize << " inches" << endl;
     }
 };
 
 int main() {
-    // Тестування класу "Точка"
-    Point p1;
-    cout << "Point 1:" << endl;
-    p1.print();
+    // Тестування класу "Комп'ютер"
+    Computer pc1(3000, "Dell", 800.0);
+    cout << "Computer 1:" << endl;
+    pc1.print();
 
-    Point p2(3, 4);
-    cout << "Point 2:" << endl;
-    p2.print();
-
-    p2.setCoordinates(5, 6);
-    cout << "Point 2 after setting new coordinates:" << endl;
-    p2.print();
-
-    // Тестування класу "Кольорова точка"
-    ColoredPoint cp1;
-    cout << "Colored Point 1:" << endl;
-    cp1.print();
-
-    ColoredPoint cp2(1, 2, "red");
-    cout << "Colored Point 2:" << endl;
-    cp2.print();
-
-    cp2.setColor("blue");
-    cout << "Colored Point 2 after changing color:" << endl;
-    cp2.print();
-
-    cout << "Coordinates of Colored Point 2:" << endl;
-    cp2.printCoordinates();
+    // Тестування класу "Комп'ютер з монітором"
+    ComputerWithMonitor pc2(3500, "HP", 1000.0, 24.0);
+    cout << "Computer with Monitor 1:" << endl;
+    pc2.print();
 
     return 0;
 }
