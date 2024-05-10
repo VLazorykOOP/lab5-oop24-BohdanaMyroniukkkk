@@ -80,7 +80,7 @@ int main() {
     cout << "Colored Point 1:" << endl;
     cp1.print();
 
-    ColoredPoint cp2(1, 2, "red");
+    ColoredPoint cp2(1, 2, "red");  
     cout << "Colored Point 2:" << endl;
     cp2.print();
 
