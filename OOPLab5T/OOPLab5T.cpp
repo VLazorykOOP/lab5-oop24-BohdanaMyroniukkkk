@@ -1,81 +1,89 @@
 ﻿#include <iostream>
-#include <cstring>
+#include <string>
 
 using namespace std;
 
-// Клас "Процесор"
-class Processor {
-private:
-    int speed; // Потужність в Мгц
+// Базовий клас "Людина"
+class Person {
+protected:
+    string name;
+    int age;
 
 public:
-    // Конструктор з параметром
-    Processor(int MHz) : speed(MHz) {}
+    // Конструктор за замовчуванням
+    Person() : name(""), age(0) {}
 
-    // Метод доступу для потужності
-    int getSpeed() const {
-        return speed;
+    // Конструктор з параметрами
+    Person(string personName, int personAge) : name(personName), age(personAge) {}
+
+    // Конструктор копіювання
+    Person(const Person& other) : name(other.name), age(other.age) {}
+
+    // Оператор присвоювання
+    Person& operator=(const Person& other) {
+        if (this != &other) {
+            name = other.name;
+            age = other.age;
+        }
+        return *this;
+    }
+
+    // Функція виводу у потік
+    friend ostream& operator<<(ostream& out, const Person& person) {
+        out << "Name: " << person.name << ", Age: " << person.age;
+        return out;
+    }
+
+    // Функція введення з потоку
+    friend istream& operator>>(istream& in, Person& person) {
+        cout << "Enter name: ";
+        in >> person.name;
+        cout << "Enter age: ";
+        in >> person.age;
+        return in;
     }
 };
 
-// Клас "Комп'ютер"
-class Computer {
-protected: // Змінив доступ на protected
-    Processor cpu; // Об'єкт процесора
-    char* brand;   // Марка комп'ютера
-    double price;  // Ціна комп'ютера
-
-public:
-    // Конструктор з параметрами
-    Computer(int MHz, const char* brandName, double computerPrice)
-        : cpu(MHz), price(computerPrice) {
-        // Виділення пам'яті для марки та копіювання рядка
-        brand = new char[strlen(brandName) + 1];
-        strcpy_s(brand, strlen(brandName) + 1, brandName);
-
-    }
-
-    // Деструктор
-    ~Computer() {
-        delete[] brand; // Звільнення виділеної пам'яті
-    }
-
-    // Функція друку
-    void print() const {
-        cout << "Brand: " << brand << ", CPU Speed: " << cpu.getSpeed() << "MHz, Price: $" << price << endl;
-    }
-};
-
-// Похідний клас "Комп'ютер з монітором"
-class ComputerWithMonitor : public Computer {
+// Похідний клас "Службовець"
+class Employee : public Person {
 private:
-    double monitorSize; // Розмір монітора в дюймах
+    string position;
 
 public:
+    // Конструктор за замовчуванням
+    Employee() : position("") {}
+
     // Конструктор з параметрами
-    ComputerWithMonitor(int MHz, const char* brandName, double computerPrice, double monitorSize)
-        : Computer(MHz, brandName, computerPrice), monitorSize(monitorSize) {}
+    Employee(string personName, int personAge, string empPosition)
+        : Person(personName, personAge), position(empPosition) {}
 
-    // Деструктор
-    ~ComputerWithMonitor() {}
+    // Функція виводу у потік
+    friend ostream& operator<<(ostream& out, const Employee& employee) {
+        out << static_cast<const Person&>(employee) << ", Position: " << employee.position;
+        return out;
+    }
 
-    // Функція друку
-    void print() const {
-        cout << "Brand: " << brand << ", CPU Speed: " << cpu.getSpeed() << "MHz, Price: $" << price
-            << ", Monitor Size: " << monitorSize << " inches" << endl;
+    // Функція введення з потоку
+    friend istream& operator>>(istream& in, Employee& employee) {
+        in >> static_cast<Person&>(employee); // Викликаємо оператор >> базового класу
+        cout << "Enter position: ";
+        in >> employee.position;
+        return in;
     }
 };
 
 int main() {
-    // Тестування класу "Комп'ютер"
-    Computer pc1(3000, "Dell", 800.0);
-    cout << "Computer 1:" << endl;
-    pc1.print();
+    // Тестування класу "Людина"
+    cout << "Enter information for a person:" << endl;
+    Person person1;
+    cin >> person1;
+    cout << "Person information: " << person1 << endl;
 
-    // Тестування класу "Комп'ютер з монітором"
-    ComputerWithMonitor pc2(3500, "HP", 1000.0, 24.0);
-    cout << "Computer with Monitor 1:" << endl;
-    pc2.print();
+    // Тестування класу "Службовець"
+    cout << "Enter information for an employee:" << endl;
+    Employee employee1;
+    cin >> employee1;
+    cout << "Employee information: " << employee1 << endl;
 
     return 0;
 }
